@@ -10,7 +10,7 @@ import UIKit
 @IBDesignable public class BadgeSwift: UILabel {
   
   /// Background color of the badge
-  @IBInspectable public var badgeColor: UIColor = UIColor.red() {
+  @IBInspectable public var badgeColor: UIColor = UIColor.redColor() {
     didSet {
       setNeedsDisplay()
     }
@@ -24,7 +24,7 @@ import UIKit
   }
   
   /// Color of the bardge border
-  @IBInspectable public var borderColor: UIColor = UIColor.white() {
+  @IBInspectable public var borderColor: UIColor = UIColor.whiteColor() {
     didSet {
       invalidateIntrinsicContentSize()
     }
@@ -57,9 +57,9 @@ import UIKit
   }
   
   /// Color of the badge shadow
-  @IBInspectable public var shadowColorBadge: UIColor = UIColor.black() {
+  @IBInspectable public var shadowColorBadge: UIColor = UIColor.blackColor() {
     didSet {
-      layer.shadowColor = shadowColorBadge.cgColor
+      layer.shadowColor = shadowColorBadge.CGColor
       setNeedsDisplay()
     }
   }
@@ -91,25 +91,26 @@ import UIKit
     setup()
   }
   
-  /// Add custom insets around the text
-  override public func textRect(forBounds bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
-    let rect = super.textRect(forBounds: bounds, limitedToNumberOfLines: numberOfLines)
-    
-    var insetsWithBorder = actualInsetsWithBorder()
-    let rectWithDefaultInsets = rect.insetBy(dx: -insetsWithBorder.width, dy: -insetsWithBorder.height)
-    
-    // If width is less than height
-    // Adjust the width insets to make it look round
-    if rectWithDefaultInsets.width < rectWithDefaultInsets.height {
-      insetsWithBorder.width = (rectWithDefaultInsets.height - rect.width) / 2
+    /// Add custom insets around the text
+    public override func textRectForBounds(bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
+        let rect = super.textRectForBounds(bounds, limitedToNumberOfLines: numberOfLines)
+        
+        var insetsWithBorder = actualInsetsWithBorder()
+        let rectWithDefaultInsets = rect.insetBy(dx: -insetsWithBorder.width, dy: -insetsWithBorder.height)
+        
+        // If width is less than height
+        // Adjust the width insets to make it look round
+        if rectWithDefaultInsets.width < rectWithDefaultInsets.height {
+            insetsWithBorder.width = (rectWithDefaultInsets.height - rect.width) / 2
+        }
+        let result = rect.insetBy(dx: -insetsWithBorder.width, dy: -insetsWithBorder.height)
+        
+        return result
+        
     }
-    let result = rect.insetBy(dx: -insetsWithBorder.width, dy: -insetsWithBorder.height)
-    
-    return result
-  }
   
   /// Draws the label with insets
-  override public func drawText(in rect: CGRect) {
+  override public func drawTextInRect(rect: CGRect) {
     layer.cornerRadius = rect.height / 2
     
     let insetsWithBorder = actualInsetsWithBorder()
@@ -121,11 +122,11 @@ import UIKit
     
     let rectWithoutInsets = UIEdgeInsetsInsetRect(rect, insets)
     
-    super.drawText(in: rectWithoutInsets)
+    super.drawTextInRect(rectWithoutInsets)
   }
   
   /// Draw the background of the badge
-  override public func draw(_ rect: CGRect) {
+    override public func drawRect(rect: CGRect) {
     let rectInset = rect.insetBy(dx: borderWidth/2, dy: borderWidth/2)
     let path = UIBezierPath(roundedRect: rectInset, cornerRadius: rect.height/2)
     
@@ -138,11 +139,11 @@ import UIKit
       path.stroke()
     }
     
-    super.draw(rect)
+        super.drawRect(rect)
   }
   
   private func setup() {
-    textAlignment = NSTextAlignment.center
+    textAlignment = NSTextAlignment.Center
     clipsToBounds = false // Allows shadow to spread beyond the bounds of the badge
   }
   
